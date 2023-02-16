@@ -9,7 +9,7 @@ public class SuggestionModel
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; } = String.Empty;
     public string Suggestion { get; set; } = String.Empty;
-    public string Desription { get; set; } = String.Empty;
+    public string Description { get; set; } = String.Empty;
     public DateTime DateCreated { get; set; } = DateTime.UtcNow;
     public CategoryModel Category { get; set; } = new();
     public BasicUserModel Author { get; set; } = new();
