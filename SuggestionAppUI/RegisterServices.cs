@@ -19,5 +19,6 @@ public static class RegisterServices
         );
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
+        builder.Services.AddMemoryCache();
     }
 }
