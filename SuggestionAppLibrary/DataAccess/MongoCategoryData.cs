@@ -20,7 +20,7 @@ public class MongoCategoryData : ICategoryData
     public async Task<List<CategoryModel>> GetCategoriesAsync()
     {
         var output = _cache.Get<List<CategoryModel>>(cacheName);
-        if (output == null)
+        if (output is null)
         {
             var result = await _categories.FindAsync(_ => true);
             output = result.ToList();
