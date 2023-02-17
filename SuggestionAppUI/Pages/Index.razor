@@ -90,13 +90,13 @@
     private string searchText = "";
     private bool isSortedByNew = true;
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         categories = await categoryData.GetCategoriesAsync();
         statuses = await statusData.GetStatusesAsync();
     }
 
-    protected async override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {

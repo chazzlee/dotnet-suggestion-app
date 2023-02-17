@@ -55,7 +55,7 @@
 
     private SuggestionModel suggestion = new();
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         suggestion = await suggestionData.GetSuggestionAsync(Id);
     }
