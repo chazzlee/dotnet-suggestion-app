@@ -6,6 +6,81 @@
 @inject NavigationManager navigationManager
 @inject ProtectedSessionStorage sessionStorage
 
+<h1>Training Suggestions</h1>
+
+<div>
+    <button type="button">Suggest</button>
+</div>
+
+<div>
+    <div>@GetSuggestionText()</div>
+    <div>
+        <button type="button" @onclick="(() => OrderByNew(true))">New</button>
+        <button type="button" @onclick="(() => OrderByNew(false))">Popular</button>
+    </div>
+    <div>
+        <input type="search" name="search" id="search" aria-label="Search box" placeholder="Search..."
+            @oninput="((text) => OnSearchInput(text.Value is not null ? (string)text.Value : String.Empty))" />
+    </div>
+</div>
+
+<div>
+    <div>
+        @if (suggestions is not null)
+        {
+            <Virtualize Items="@suggestions" Context="suggestion" OverscanCount="10">
+                <div>
+                    <div>
+                        <div>@GetUpvoteTopText(suggestion)</div>
+                        <span class="oi oi-caret-top"></span>
+                        <div>@GetUpvoteBottomText(suggestion)</div>
+                    </div>
+                    <div>
+                        <div @onclick="(() => OpenDetails(suggestion))">
+                            @suggestion.Suggestion
+                        </div>
+                        <div>
+                            <div @onclick="(() => OpenDetails(suggestion))">
+                                @suggestion.Category.CategoryName
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            @suggestion.SuggestionStatus?.StatusName
+                        </div>
+                    </div>
+                </div>
+            </Virtualize>
+        }
+    </div>
+    <div>
+        @if (categories is not null)
+        {
+            <div>
+                <span>Category</span>
+                <div @onclick="(() => OnCategoryClick())">All</div>
+                @foreach (var category in categories)
+                {
+                    <div @onclick="(() => OnCategoryClick(category.CategoryName))">@category.CategoryName</div>
+                }
+            </div>
+        }
+
+        @if (statuses is not null)
+        {
+            <div>
+                <span>Status</span>
+                <div @onclick="(() => OnStatusClick())">All</div>
+                @foreach (var status in statuses)
+                {
+                    <div @onclick="(() => OnStatusClick(status.StatusName))">@status.StatusName</div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
 @code {
     private List<SuggestionModel> suggestions = new();
     private List<CategoryModel> categories = new();
@@ -107,6 +182,11 @@
     {
         selectedStatus = status;
         await FilterSuggestions();
+    }
+
+    private string GetSuggestionText()
+    {
+        return suggestions.Count == 1 ? $"{suggestions.Count} Suggestion" : $"{suggestions.Count} Suggestions";
     }
 
     private string GetUpvoteTopText(SuggestionModel suggestion)
