@@ -70,7 +70,7 @@ public class MongoSuggestionData : ISuggestionData
 
     public async Task UpdateSuggestionAsync(SuggestionModel suggestion)
     {
-        await _suggestions.ReplaceOneAsync(suggestion => suggestion.Id == suggestion.Id, suggestion);
+        await _suggestions.ReplaceOneAsync(s => s.Id == suggestion.Id, suggestion);
         _cache.Remove(CacheName);
     }
 
