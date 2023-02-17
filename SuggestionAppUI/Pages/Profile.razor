@@ -16,94 +16,17 @@
     </p>
 </div>
 
-@if (approved.Count > 0)
-{
-    <div>
-        <h2>Approved Suggestions</h2>
-        <p>These are your suggestions that are currently active.</p>
-        @foreach (var suggestion in approved)
-        {
-            <hr />
-            <div>@suggestion.Suggestion</div>
-            <p>@suggestion.DateCreated.ToString("MM.dd.yyyy")</p>
-            <p>Total Votes: @suggestion.UserVotes.Count</p>
-            <p>@suggestion.Category.CategoryName</p>
-            <p>@suggestion.Description</p>
-            @if (@suggestion.SuggestionStatus is not null)
-            {
-                <div>@suggestion.SuggestionStatus.StatusName</div>
-                <p>@((MarkupString)suggestion.OwnerNotes)</p>
-            }
-        }
-    </div>
-}
+<SuggestionList Title="Approved Suggestions" SubTitle="These are your suggestions that are currently active."
+    Suggestions="@approved" />
 
-@if (archived.Count > 0)
-{
-    <div>
-        <h2>Archived Suggestions</h2>
-        <p>These are your suggestions that were active but did not gain enough traction.</p>
-        @foreach (var suggestion in archived)
-        {
-            <hr />
-            <div>@suggestion.Suggestion</div>
-            <p>@suggestion.DateCreated.ToString("MM.dd.yyyy")</p>
-            <p>Total Votes: @suggestion.UserVotes.Count</p>
-            <p>@suggestion.Category.CategoryName</p>
-            <p>@suggestion.Description</p>
-            @if (@suggestion.SuggestionStatus is not null)
-            {
-                <div>@suggestion.SuggestionStatus.StatusName</div>
-                <p>@((MarkupString)suggestion.OwnerNotes)</p>
-            }
-        }
-    </div>
-}
+<SuggestionList Title="Archived Suggestions" SubTitle="These are your suggestions that were active but did not gain enough traction."
+    Suggestions="@archived" />
 
-@if (pending.Count > 0)
-{
-    <div>
-        <h2>Pending Suggestions</h2>
-        <p>These are your suggestions that have not yet been reviewed by the administrators.</p>
-        @foreach (var suggestion in pending)
-        {
-            <hr />
-            <div>@suggestion.Suggestion</div>
-            <p>@suggestion.DateCreated.ToString("MM.dd.yyyy")</p>
-            <p>Total Votes: @suggestion.UserVotes.Count</p>
-            <p>@suggestion.Category.CategoryName</p>
-            <p>@suggestion.Description</p>
-            @if (@suggestion.SuggestionStatus is not null)
-            {
-                <div>@suggestion.SuggestionStatus.StatusName</div>
-                <p>@((MarkupString)suggestion.OwnerNotes)</p>
-            }
-        }
-    </div>
-}
+<SuggestionList Title="Pending Suggestions" SubTitle="These are your suggestions that have not yet been reviewed by the administrators."
+    Suggestions="@pending" />
 
-@if (rejected.Count > 0)
-{
-    <div>
-        <h2>Rejected Suggestions</h2>
-        <p>These are your suggestions that were not deemed to be appropriate for the training suggestion site.</p>
-        @foreach (var suggestion in rejected)
-        {
-            <hr />
-            <div>@suggestion.Suggestion</div>
-            <p>@suggestion.DateCreated.ToString("MM.dd.yyyy")</p>
-            <p>Total Votes: @suggestion.UserVotes.Count</p>
-            <p>@suggestion.Category.CategoryName</p>
-            <p>@suggestion.Description</p>
-            @if (@suggestion.SuggestionStatus is not null)
-            {
-                <div>@suggestion.SuggestionStatus.StatusName</div>
-                <p>@((MarkupString)suggestion.OwnerNotes)</p>
-            }
-        }
-    </div>
-}
-
+<SuggestionList Title="Rejected Suggestions" SubTitle="These are your suggestions that were not deemed to be appropriate for the training suggestion site."
+    Suggestions="@rejected" />
 
 @code {
     private UserModel authenticatedUser = new();
@@ -123,14 +46,15 @@
         {
             submissions = result.OrderByDescending(submission => submission.DateCreated).ToList();
             approved = submissions
-                .Where(
-                    submission => submission.ApprovedForRelease && submission.Archived == false &&
-                    submission.Rejected == false
-                ).ToList();
+            .Where(
+            submission => submission.ApprovedForRelease && submission.Archived == false &&
+            submission.Rejected == false
+            ).ToList();
             archived = submissions
-                .Where(submission => submission.Archived && submission.Rejected == false)
-                .ToList();
-            pending = submissions.Where(submission => submission.ApprovedForRelease == false && submission.Rejected == false).ToList();
+            .Where(submission => submission.Archived && submission.Rejected == false)
+            .ToList();
+            pending = submissions.Where(submission => submission.ApprovedForRelease == false && submission.Rejected ==
+            false).ToList();
             rejected = submissions.Where(submission => submission.Rejected).ToList();
         }
     }

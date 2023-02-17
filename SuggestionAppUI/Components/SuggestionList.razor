@@ -1,0 +1,32 @@
+@if (Suggestions.Count > 0)
+{
+    <div>
+        <h2>@Title</h2>
+        <p>@SubTitle</p>
+        @foreach (var suggestion in Suggestions)
+        {
+            <hr />
+            <div>@suggestion.Suggestion</div>
+            <p>@suggestion.DateCreated.ToString("MM.dd.yyyy")</p>
+            <p>Total Votes: @suggestion.UserVotes.Count</p>
+            <p>@suggestion.Category.CategoryName</p>
+            <p>@suggestion.Description</p>
+            @if (@suggestion.SuggestionStatus is not null)
+            {
+                <div>@suggestion.SuggestionStatus.StatusName</div>
+                <p>@((MarkupString)suggestion.OwnerNotes)</p>
+            }
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public List<SuggestionModel> Suggestions { get; set; } = new();
+
+    [Parameter]
+    public string Title { get; set; } = String.Empty;
+
+    [Parameter]
+    public string SubTitle { get; set; } = String.Empty;
+}
