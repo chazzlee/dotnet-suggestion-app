@@ -1,4 +1,5 @@
 @page "/AdminApproval"
+@attribute [Authorize(Policy = "Admin")]
 @inject IUserData userData
 @inject ISuggestionData suggestionData
 @inject NavigationManager navigationManager
@@ -16,17 +17,17 @@
     @foreach (var submission in submissions)
     {
         <div>
-            <div>
-                <button type="button" @onclick="(() => ApproveSubmission(submission))">Approve</button>
-                <button type="button" @onclick="(() => RejectSubmission(submission))">Reject</button>
-            </div>
-            <div>
-                <div>
-                    @if (currentEditingTitle == submission.Id)
+    <div>
+        <button type="button" @onclick="(() => ApproveSubmission(submission))">Approve</button>
+        <button type="button" @onclick="(() => RejectSubmission(submission))">Reject</button>
+    </div>
+    <div>
+        <div>
+            @if (currentEditingTitle == submission.Id)
                     {
                         <EditForm Model="@editedTitle" OnSubmit="(() => SaveTitle(submission))">
                             <InputText @bind-Value="editedTitle" />
-                            <button type="submit">
+                            <button type="submit" @onclick="(() => SaveTitle(submission))">
                                 <span class="oi oi-check"></span>
                             </button>
                             <button type="button" @onclick="(() => currentEditingTitle = String.Empty)">
