@@ -31,7 +31,7 @@
         {
             <Virtualize Items="@suggestions" Context="suggestion" OverscanCount="10">
                 <div>
-                    <div>
+                    <div @onclick="(() => VoteUp(suggestion))">
                         <div>@GetUpvoteTopText(suggestion)</div>
                         <span class="oi oi-caret-top"></span>
                         <div>@GetUpvoteBottomText(suggestion)</div>
@@ -94,9 +94,61 @@
 
     protected override async Task OnInitializedAsync()
     {
-        authenticatedUser = await authenticationProvider.GetUserFromAuthAsync(userData);
         categories = await categoryData.GetCategoriesAsync();
         statuses = await statusData.GetStatusesAsync();
+        await LoadAndVerifyUser();
+    }
+
+    private async Task LoadAndVerifyUser()
+    {
+        var authState = await authenticationProvider.GetAuthenticationStateAsync();
+        var objectId = authState.User.Claims.FirstOrDefault(claim => claim.Type.Contains("objectidentifier"))?.Value;
+        if (string.IsNullOrWhiteSpace(objectId) == false)
+        {
+            authenticatedUser = await userData.GetUserFromAuthenticationAsync(objectId) ?? new();
+            var firstName = authState.User.Claims.FirstOrDefault(claim => claim.Type.Contains("givenname"))?.Value;
+            var lastName = authState.User.Claims.FirstOrDefault(claim => claim.Type.Contains("surname"))?.Value;
+            var displayName = authState.User.Claims.FirstOrDefault(claim => claim.Type.Equals("name"))?.Value;
+            var email = authState.User.Claims.FirstOrDefault(claim => claim.Type.Contains("email"))?.Value;
+
+            var isDirty = false;
+            if (objectId.Equals(authenticatedUser.ObjectIdentifier) == false)
+            {
+                isDirty = true;
+                authenticatedUser.ObjectIdentifier = objectId;
+            }
+            if (firstName?.Equals(authenticatedUser.FirstName) == false)
+            {
+                isDirty = true;
+                authenticatedUser.FirstName = firstName;
+            }
+            if (lastName?.Equals(authenticatedUser.LastName) == false)
+            {
+                isDirty = true;
+                authenticatedUser.LastName = lastName;
+            }
+            if (displayName?.Equals(authenticatedUser.DisplayName) == false)
+            {
+                isDirty = true;
+                authenticatedUser.DisplayName = displayName;
+            }
+            if (email?.Equals(authenticatedUser.EmailAddress) == false)
+            {
+                isDirty = true;
+                authenticatedUser.EmailAddress = email;
+            }
+            if (isDirty)
+            {
+                if (string.IsNullOrWhiteSpace(authenticatedUser.Id))
+                {
+                    await userData.CreateUser(authenticatedUser);
+                }
+                else
+                {
+                    await userData.UpdateUser(authenticatedUser);
+                }
+            }
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -192,9 +244,39 @@
         return suggestions.Count == 1 ? $"{suggestions.Count} Suggestion" : $"{suggestions.Count} Suggestions";
     }
 
+    private async Task VoteUp(SuggestionModel suggestion)
+    {
+        if (authenticatedUser is not null)
+        {
+            if (suggestion.Author.Id == authenticatedUser.Id)
+            {
+                // Can't vote on your own suggerstion
+                return;
+            }
+            if (suggestion.UserVotes.Add(authenticatedUser.Id) == false)
+            {
+                suggestion.UserVotes.Remove(authenticatedUser.Id);
+            }
+            await suggestionData.UpvoteSuggestionAsync(suggestion.Id, authenticatedUser.Id);
+
+            if (isSortedByNew == false)
+            {
+                suggestions = suggestions
+                .OrderByDescending(suggestion => suggestion.UserVotes.Count)
+                .ThenByDescending(suggestion => suggestion.DateCreated)
+                .ToList();
+            }
+        }
+        else
+        {
+            navigationManager.NavigateTo("/MicrosoftIdentity/Account/SignIn", true);
+        }
+    }
+
     private string GetUpvoteTopText(SuggestionModel suggestion)
     {
-        return suggestion.UserVotes.Count > 0 ? suggestion.UserVotes.Count.ToString("00") : "Click To";
+        var label = suggestion.Author.Id == authenticatedUser.Id ? "Awaiting" : "Click To";
+        return suggestion.UserVotes.Count > 0 ? suggestion.UserVotes.Count.ToString("00") : label;
     }
 
     private string GetUpvoteBottomText(SuggestionModel suggestion)

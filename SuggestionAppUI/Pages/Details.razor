@@ -1,4 +1,6 @@
 @page "/Details/{Id}"
+@inject AuthenticationStateProvider authenticationProvider
+@inject IUserData userData
 @inject ISuggestionData suggestionData
 @inject NavigationManager navigationManager
 
@@ -9,7 +11,7 @@
         {
             <div>
                 <div>
-                    <div>
+                    <div @onclick="VoteUp">
                         <div>@GetUpvoteTopText()</div>
                         <span class="oi oi-caret-top"></span>
                         <div>@GetUpvoteBottomText()</div>
@@ -35,18 +37,18 @@
 @if (suggestion?.SuggestionStatus is not null)
 {
     <div>
+    <div>
+        <div></div>
         <div>
-            <div></div>
             <div>
-                <div>
-                    @suggestion.SuggestionStatus.StatusName
-                </div>
-                <div>
-                    @((MarkupString)suggestion.OwnerNotes)
-                </div>
+                @suggestion.SuggestionStatus.StatusName
+            </div>
+            <div>
+                @((MarkupString)suggestion.OwnerNotes)
             </div>
         </div>
     </div>
+</div>
 }
 
 @code {
@@ -54,10 +56,33 @@
     public string Id { get; set; } = String.Empty;
 
     private SuggestionModel suggestion = new();
+    private UserModel authenticatedUser = new();
 
     protected override async Task OnInitializedAsync()
     {
         suggestion = await suggestionData.GetSuggestionAsync(Id);
+        authenticatedUser = await authenticationProvider.GetUserFromAuthAsync();
+    }
+
+    private async Task VoteUp()
+    {
+        if (authenticatedUser is not null)
+        {
+            if (suggestion.Author.Id == authenticatedUser.Id)
+            {
+                // Can't vote on your own suggerstion
+                return;
+            }
+            if (suggestion.UserVotes.Add(authenticatedUser.Id) == false)
+            {
+                suggestion.UserVotes.Remove(authenticatedUser.Id);
+            }
+            await suggestionData.UpvoteSuggestionAsync(suggestion.Id, authenticatedUser.Id);
+        }
+        else
+        {
+            navigationManager.NavigateTo("/MicrosoftIdentity/Account/SignIn", true);
+        }
     }
 
     private void ClosePage()
@@ -67,7 +92,8 @@
 
     private string GetUpvoteTopText()
     {
-        return suggestion.UserVotes.Count > 0 ? suggestion.UserVotes.Count.ToString("00") : "Click To";
+        var label = suggestion.Author.Id == authenticatedUser.Id ? "Awaiting" : "Click To";
+        return suggestion.UserVotes.Count > 0 ? suggestion.UserVotes.Count.ToString("00") : label;
     }
 
     private string GetUpvoteBottomText()
