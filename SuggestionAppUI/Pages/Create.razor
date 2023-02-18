@@ -34,18 +34,18 @@
                                 <label for="@category.Id">@category.CategoryName - @category.CategoryDescription</label>
                             </div>
                             }
-                        </CustomRadioGroup>
-                    </div>
+                    </CustomRadioGroup>
                 </div>
-                <div>
-                    <label for="description">Description</label>
-                    <p>Briefly describe your suggestion.</p>
-                    <InputTextArea id="description" @bind-Value="suggestion.Description" />
-                </div>
-                <div>
-                    <button type="submit">Suggest</button>
-                </div>
-            </EditForm>
+            </div>
+            <div>
+                <label for="description">Description</label>
+                <p>Briefly describe your suggestion.</p>
+                <InputTextArea id="description" @bind-Value="suggestion.Description" />
+            </div>
+            <div>
+                <button type="submit">Suggest</button>
+            </div>
+        </EditForm>
         }
     </div>
 </div>

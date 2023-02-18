@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 
 namespace SuggestionAppUI;
 
@@ -20,10 +21,11 @@ public static class RegisterServices
             }
         );
         builder.Services.AddRazorPages();
-        builder.Services.AddServerSideBlazor();
+        builder.Services.AddServerSideBlazor().AddMicrosoftIdentityConsentHandler();
         builder.Services.AddMemoryCache();
+        builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
         builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-            .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAdB2C"));
+            .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureADB2C"));
         builder.Services.AddAuthorization(options =>
         {
             options.AddPolicy("Admin", policy =>
