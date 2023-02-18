@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inject AuthenticationStateProvider authenticationProvider
 @inject ICategoryData categoryData
 @inject IStatusData statusData
 @inject ISuggestionData suggestionData
@@ -82,6 +83,7 @@
 </div>
 
 @code {
+    private UserModel authenticatedUser = new();
     private List<SuggestionModel> suggestions = new();
     private List<CategoryModel> categories = new();
     private List<StatusModel> statuses = new();
@@ -92,6 +94,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        authenticatedUser = await authenticationProvider.GetUserFromAuthAsync(userData);
         categories = await categoryData.GetCategoriesAsync();
         statuses = await statusData.GetStatusesAsync();
     }

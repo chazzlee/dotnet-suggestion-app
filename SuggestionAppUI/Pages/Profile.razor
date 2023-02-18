@@ -1,5 +1,6 @@
 @page "/Profile"
 @attribute [Authorize]
+@inject AuthenticationStateProvider authenticationProvider
 @inject ISuggestionData suggestionData
 @inject IUserData userData
 @inject NavigationManager navigationManager
@@ -47,8 +48,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        @* TODO: *@
-        authenticatedUser = await userData.GetUserFromAuthenticationAsync("abc-123");
+        authenticatedUser = await authenticationProvider.GetUserFromAuthAsync(userData);
         var result = await suggestionData.GetSuggestionsByUserAsync(authenticatedUser.Id);
 
         if (authenticatedUser is not null && result is not null)
