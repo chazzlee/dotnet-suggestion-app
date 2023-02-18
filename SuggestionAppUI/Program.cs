@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Hosting;
 using SuggestionAppUI;
 
@@ -22,6 +23,19 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseRewriter(
+    new RewriteOptions().Add(context =>
+    {
+        if (context.HttpContext.Request.Path == "/MicrosoftIdentity/Account/SignOut")
+        {
+            context.HttpContext.Response.Redirect("/");
+        }
+    })
+);
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
