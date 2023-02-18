@@ -61,7 +61,7 @@
     protected override async Task OnInitializedAsync()
     {
         suggestion = await suggestionData.GetSuggestionAsync(Id);
-        authenticatedUser = await authenticationProvider.GetUserFromAuthAsync();
+        authenticatedUser = await authenticationProvider.GetUserFromAuthAsync(userData);
     }
 
     private async Task VoteUp()
