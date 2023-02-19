@@ -1,8 +1,76 @@
 @import url("open-iconic/font/css/open-iconic-bootstrap.min.css");
+@font-face {
+  font-family: "Roboto";
+  src: local("Roboto"), url("./fonts/Roboto/Roboto-Thin.ttf") format("truetype"),
+    url("./fonts/Roboto/Roboto-ThinItalic.ttf") format("truetype"),
+    url("./fonts/Roboto/Roboto-Regular.ttf") format("truetype"),
+    url("./fonts/Roboto/Roboto-Medium.ttf") format("truetype"),
+    url("./fonts/Roboto/Roboto-MediumItalic.ttf") format("truetype"),
+    url("./fonts/Roboto/Roboto-Light.ttf") format("truetype"),
+    url("./fonts/Roboto/Roboto-LightItalic.ttf") format("truetype"),
+    url("./fonts/Roboto/Roboto-Bold.ttf") format("truetype"),
+    url("./fonts/Roboto/Roboto-BoldItalic.ttf") format("truetype"),
+    url("./fonts/Roboto/Roboto-Black.ttf") format("truetype"),
+    url("./fonts/Roboto/Roboto-BlackItalic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Montserrat";
+  src: local("Montserrat"),
+    url("./fonts/Montserrat/Montserrat-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: local("Montserrat"),
+    url("./fonts/Montserrat/Montserrat-BoldItalic.ttf") format("truetype");
+  font-weight: bold;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: local("Montserrat"),
+    url("./fonts/Montserrat/Montserrat-Black.ttf") format("truetype");
+  font-weight: bolder;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: local("Montserrat"),
+    url("./fonts/Montserrat/Montserrat-BlackItalic.ttf") format("truetype");
+  font-weight: bolder;
+  font-style: italic;
+}
 
 html,
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Roboto", sans-serif;
+  font-size: 18px;
+  color: #fff;
+}
+
+body {
+  background-image: url(../images/background.jpg);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: cover;
+  height: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 900;
+  color: #fff;
+}
+
+h1 {
+  padding-top: 1rem;
 }
 
 h1:focus {

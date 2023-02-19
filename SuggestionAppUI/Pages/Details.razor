@@ -92,7 +92,7 @@
 
     private string GetUpvoteTopText()
     {
-        var label = suggestion.Author.Id == authenticatedUser.Id ? "Awaiting" : "Click To";
+        var label = suggestion.Author.Id == authenticatedUser?.Id ? "Awaiting" : "Click To";
         return suggestion.UserVotes.Count > 0 ? suggestion.UserVotes.Count.ToString("00") : label;
     }
 
